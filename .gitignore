@@ -60,3 +60,7 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Python utility scripts (e.g., fix_script_refs.py)
+__pycache__/
+*.pyc
