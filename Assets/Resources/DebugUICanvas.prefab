@@ -72,7 +72,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1709254077376921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: d3e719b59ab71ba3f6b398058c866280, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name:
   m_EditorClassIdentifier:
   m_UiScaleMode: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1709254077376921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: d3e719b59ab71ba3f6b398058c866280, type: 3}
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name:
   m_EditorClassIdentifier:
   m_IgnoreReversedGraphics: 1
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1709254077376921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -455843761, guid: 57c9a3e5193e26c4b968cc86e528416d, type: 3}
+  m_Script: {fileID: 11500000, guid: 76db615e524a19c4990482d75a475543, type: 3}
   m_Name:
   m_EditorClassIdentifier:
   panelPrefab: {fileID: 224002669891404536, guid: d70b140d0add5a049932fccb1e73dedb, type: 2}
