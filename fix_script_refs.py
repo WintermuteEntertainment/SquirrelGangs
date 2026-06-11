@@ -41,6 +41,32 @@ YAML_EXTS = {'.unity', '.prefab', '.asset', '.controller', '.mat', '.anim',
 # Pattern: m_Script: {fileID: X, guid: Y, type: 3}
 SCRIPT_REF_PAT = re.compile(r'm_Script:\s*\{fileID:\s*(-?\d+),\s*guid:\s*([a-f0-9]{32}),\s*type:\s*3\}')
 
+# Manually identified (old_guid, fileID) -> package class name, for cases where the
+# fingerprint matcher can't score confidently (classes whose serialized fields use
+# attribute syntax the regex extractor misses, or single-field classes).
+# The class GUID is resolved from PackageCache <ClassName>.cs.meta at runtime.
+MANUAL_REMAP = {
+    ('c88ab7b37c4f350242674d2efd621c19',  938447500): 'UniversalAdditionalCameraData',
+    ('c88ab7b37c4f350242674d2efd621c19',  796348501): 'Light2D',
+    ('c88ab7b37c4f350242674d2efd621c19', -1431003440): 'UniversalAdditionalLightData',
+    ('c88ab7b37c4f350242674d2efd621c19',  474283971): 'UniversalRenderPipelineGlobalSettings',
+    ('c88ab7b37c4f350242674d2efd621c19', -549186028): 'UniversalRenderPipelineAsset',
+    ('67dfb1fdfb2b407222eda8e23ac8b724', -1936749209): 'TMP_StyleSheet',
+    ('d3e719b59ab71ba3f6b398058c866280', -1200242548): 'Mask',
+    ('d3e719b59ab71ba3f6b398058c866280', -1862395651): 'EventTrigger',
+    ('57c9a3e5193e26c4b968cc86e528416d', -1244478167): 'DebugUIHandlerContainer',
+}
+
+
+def resolve_class_guid_by_filename(class_name):
+    """Find <class_name>.cs.meta in PackageCache and return its guid."""
+    hits = list(PKG_DIR.rglob(f'{class_name}.cs.meta'))
+    for h in hits:
+        m = re.search(r'^guid:\s*([a-f0-9]{32})', h.read_text(encoding='utf-8', errors='ignore'), re.MULTILINE)
+        if m:
+            return m.group(1)
+    return None
+
 # C# field declaration matching: covers public, [SerializeField] private/protected
 # We use a forgiving regex; the goal is field NAMES, not perfect parse
 CLASS_DECL_PAT = re.compile(
@@ -256,6 +282,13 @@ def main():
         sig = set()
         for fields in occs.values():
             sig.update(fields)
+        # Manual pin takes precedence over fingerprint matching
+        if (guid, fid) in MANUAL_REMAP:
+            cname = MANUAL_REMAP[(guid, fid)]
+            new_guid = resolve_class_guid_by_filename(cname)
+            if new_guid:
+                remap[(guid, fid)] = (new_guid, 11500000, cname, 1.0, -1)
+                continue
         cname, score, overlap = best_class_match(sig, classes, mono_classes)
         # Confidence rule: relaxed since we now filter to concrete Mono/SO classes only
         #   - overlap >= 2 with high coverage (small but specific classes like ContentSizeFitter)
