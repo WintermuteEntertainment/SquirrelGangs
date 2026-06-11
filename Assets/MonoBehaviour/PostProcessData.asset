@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: PostProcessData
   m_EditorClassIdentifier:
   shaders:
-    stopNanPS: {fileID: 4800000, guid: 0c07f0f4e8e546d4cbde1ebad7f56cc9, type: 3}
-    subpixelMorphologicalAntialiasingPS: {fileID: 4800000, guid: ea887eaee5a4a2649b329bf252f3f038, type: 3}
-    gaussianDepthOfFieldPS: {fileID: 4800000, guid: c374a1b661623da4888e450e40a2d755, type: 3}
-    bokehDepthOfFieldPS: {fileID: 4800000, guid: 6cd7975058e456640a058e72e128c7d8, type: 3}
-    cameraMotionBlurPS: {fileID: 4800000, guid: 821bb921f96bb9341abd825ca7f82ca8, type: 3}
-    paniniProjectionPS: {fileID: 4800000, guid: c1bee8b2e7ba6ec479ec7647ce8ecdfa, type: 3}
-    lutBuilderLdrPS: {fileID: 4800000, guid: bb5875f1adfc67c4c8d74366ef2d4508, type: 3}
-    lutBuilderHdrPS: {fileID: 4800000, guid: 65bc7ede51be88e4bbd82302787ae816, type: 3}
-    bloomPS: {fileID: 4800000, guid: 42538fed30fe3c346953a913eb057684, type: 3}
-    temporalAntialiasingPS: {fileID: 4800000, guid: 6ebe097b9c57f294783892b839723d50, type: 3}
-    LensFlareDataDrivenPS: {fileID: 4800000, guid: 405070cd4746a2c4aa64dee61443fa1a, type: 3}
-    scalingSetupPS: {fileID: 4800000, guid: 297f3a7aec1319a47b68342dc3c445e5, type: 3}
-    easuPS: {fileID: 4800000, guid: a3b81da109274584188247273cdf9d9d, type: 3}
-    uberPostPS: {fileID: 4800000, guid: 9970f44c146592c4194e3012839412af, type: 3}
-    finalPostPassPS: {fileID: 4800000, guid: d9b5d7ebb578f4a45975f6caaf719ca9, type: 3}
+    stopNanPS: {fileID: 4800000, guid: 1121bb4e615ca3c48b214e79e841e823, type: 3}
+    subpixelMorphologicalAntialiasingPS: {fileID: 4800000, guid: 63eaba0ebfb82cc43bde059b4a8c65f6, type: 3}
+    gaussianDepthOfFieldPS: {fileID: 4800000, guid: 5e7134d6e63e0bc47a1dd2669cedb379, type: 3}
+    bokehDepthOfFieldPS: {fileID: 4800000, guid: 2aed67ad60045d54ba3a00c91e2d2631, type: 3}
+    cameraMotionBlurPS: {fileID: 4800000, guid: 1edcd131364091c46a17cbff0b1de97a, type: 3}
+    paniniProjectionPS: {fileID: 4800000, guid: a15b78cf8ca26ca4fb2090293153c62c, type: 3}
+    lutBuilderLdrPS: {fileID: 4800000, guid: 65df88701913c224d95fc554db28381a, type: 3}
+    lutBuilderHdrPS: {fileID: 4800000, guid: ec9fec698a3456d4fb18cf8bacb7a2bc, type: 3}
+    bloomPS: {fileID: 4800000, guid: 5f1864addb451f54bae8c86d230f736e, type: 3}
+    temporalAntialiasingPS: {fileID: 4800000, guid: 131f1b93a4ebd459ba87b6bad055fb33, type: 3}
+    LensFlareDataDrivenPS: {fileID: 4800000, guid: 6cda457ac28612740adb23da5d39ea92, type: 3}
+    scalingSetupPS: {fileID: 4800000, guid: e8ee25143a34b8c4388709ea947055d1, type: 3}
+    easuPS: {fileID: 4800000, guid: 562b7ae4f629f144aa97780546fce7c6, type: 3}
+    uberPostPS: {fileID: 4800000, guid: e7857e9d0c934dc4f83f270f8447b006, type: 3}
+    finalPostPassPS: {fileID: 4800000, guid: c49e63ed1bbcb334780a3bd19dfed403, type: 3}
   textures:
     blueNoise16LTex:
     - {fileID: 2800000, guid: 94805960313f617498b692e467ffd0a3, type: 3}
