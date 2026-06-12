@@ -1,13 +1,15 @@
 #if UNITY_EDITOR
-// Temporary recovery diagnostic - delete once UI input works.
-// Auto-spawns in Play mode; logs input/event-system state every 2s and a
-// full UI raycast on every left click, prefixed [UIDoctor].
+// Temporary recovery diagnostic v2 - delete once UI input works.
+// Logs the input module's INTERNAL pointer pipeline (action values, module
+// raycast, click dispatch) plus runtime listeners on every Button.
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIDebugProbe : MonoBehaviour
 {
@@ -20,6 +22,25 @@ public class UIDebugProbe : MonoBehaviour
 	}
 
 	private float nextStatus;
+
+	private void OnEnable()
+	{
+		SceneManager.sceneLoaded += OnSceneLoaded;
+		HookAllButtons("probe-start");
+	}
+
+	private void OnSceneLoaded(Scene s, LoadSceneMode m) => HookAllButtons(s.name);
+
+	private void HookAllButtons(string context)
+	{
+		Button[] buttons = FindObjectsOfType<Button>(true);
+		foreach (Button b in buttons)
+		{
+			Button captured = b;
+			b.onClick.AddListener(() => Debug.Log($"[UIDoctor] >>> Button.onClick FIRED: {captured.name}"));
+		}
+		Debug.Log($"[UIDoctor] hooked {buttons.Length} buttons ({context})");
+	}
 
 	private void Update()
 	{
@@ -37,41 +58,31 @@ public class UIDebugProbe : MonoBehaviour
 	private void LogStatus()
 	{
 		StringBuilder sb = new StringBuilder("[UIDoctor] STATUS ");
-
-		sb.Append("devices=[");
-		foreach (InputDevice d in InputSystem.devices) sb.Append(d.layout).Append(' ');
-		sb.Append("] ");
-
-		sb.Append("focused=").Append(Application.isFocused).Append(' ');
-
 		EventSystem es = EventSystem.current;
-		if (es == null)
-		{
-			sb.Append("eventSystem=NULL");
-			Debug.Log(sb.ToString());
-			return;
-		}
-		sb.Append("es=").Append(es.gameObject.name).Append(' ');
-		sb.Append("module=").Append(es.currentInputModule != null ? es.currentInputModule.GetType().Name : "NULL").Append(' ');
+		if (es == null) { Debug.Log(sb.Append("eventSystem=NULL").ToString()); return; }
 
 		if (es.currentInputModule is InputSystemUIInputModule m)
 		{
 			InputAction point = m.point != null ? m.point.action : null;
 			InputAction click = m.leftClick != null ? m.leftClick.action : null;
-			sb.Append("pointAction=").Append(point == null ? "NULL" : $"{point.name}/enabled={point.enabled}/controls={point.controls.Count} ");
-			sb.Append("clickAction=").Append(click == null ? "NULL" : $"{click.name}/enabled={click.enabled}/controls={click.controls.Count} ");
+			if (point != null)
+				sb.Append("pointValue=").Append(point.ReadValue<Vector2>()).Append(' ');
+			if (click != null)
+				sb.Append($"clickPhase={click.phase} ");
+			// What does the MODULE think is under the pointer?
+			RaycastResult rr = m.GetLastRaycastResult(0);
+			sb.Append("moduleRaycast=").Append(rr.gameObject != null ? rr.gameObject.name : "NOTHING").Append(' ');
 		}
-
-		MainMenu mm = FindObjectOfType<MainMenu>(true);
-		if (mm != null)
+		else
 		{
-			sb.Append("panels[main=").Append(mm.mainMenuUI != null && mm.mainMenuUI.activeInHierarchy ? 1 : 0);
-			sb.Append(" select=").Append(mm.playerSelectUI != null && mm.playerSelectUI.activeInHierarchy ? 1 : 0);
-			sb.Append(" options=").Append(mm.optionsMenuUI != null && mm.optionsMenuUI.activeInHierarchy ? 1 : 0).Append("] ");
+			sb.Append("module=").Append(es.currentInputModule != null ? es.currentInputModule.GetType().Name : "NULL").Append(' ');
 		}
 
+		sb.Append("selected=").Append(es.currentSelectedGameObject != null ? es.currentSelectedGameObject.name : "none").Append(' ');
+		sb.Append("playerInputs=").Append(FindObjectsOfType<PlayerInput>(true).Length);
+		sb.Append(" pim=").Append(FindObjectsOfType<PlayerInputManager>(true).Length);
 		if (Mouse.current != null)
-			sb.Append("mousePos=").Append(Mouse.current.position.ReadValue());
+			sb.Append(" rawMouse=").Append(Mouse.current.position.ReadValue());
 
 		Debug.Log(sb.ToString());
 	}
@@ -80,16 +91,21 @@ public class UIDebugProbe : MonoBehaviour
 	{
 		EventSystem es = EventSystem.current;
 		Vector2 pos = Mouse.current.position.ReadValue();
-		if (es == null)
+		if (es == null) { Debug.Log($"[UIDoctor] CLICK at {pos} - NO EventSystem"); return; }
+
+		StringBuilder sb = new StringBuilder($"[UIDoctor] CLICK at {pos} ");
+		if (es.currentInputModule is InputSystemUIInputModule m)
 		{
-			Debug.Log($"[UIDoctor] CLICK at {pos} - NO EventSystem");
-			return;
+			InputAction point = m.point != null ? m.point.action : null;
+			if (point != null) sb.Append($"pointAction={point.ReadValue<Vector2>()} ");
+			RaycastResult rr = m.GetLastRaycastResult(0);
+			sb.Append("moduleSees=").Append(rr.gameObject != null ? rr.gameObject.name : "NOTHING").Append(' ');
 		}
 		PointerEventData ped = new PointerEventData(es) { position = pos };
 		List<RaycastResult> results = new List<RaycastResult>();
 		es.RaycastAll(ped, results);
-		StringBuilder sb = new StringBuilder($"[UIDoctor] CLICK at {pos} - {results.Count} UI hit(s): ");
-		for (int i = 0; i < Mathf.Min(5, results.Count); i++)
+		sb.Append("manualRaycast=");
+		for (int i = 0; i < Mathf.Min(3, results.Count); i++)
 			sb.Append(results[i].gameObject.name).Append(" > ");
 		Debug.Log(sb.ToString());
 	}
