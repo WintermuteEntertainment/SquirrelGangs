@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: SkyTiles_19
   m_EditorClassIdentifier:
-  m_Sprite: {fileID: 21300000, guid: a6c4dd5376546a64c896f102a825b644, type: 2}
+  m_Sprite: {fileID: 21300000, guid: ece897534fd576e459a70fb981353857, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
